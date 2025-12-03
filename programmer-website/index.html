@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Doe - Senior Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light text-dark">
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full bg-white/80 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-primary">JD</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="hover:text-primary transition-colors">About</a>
+                <a href="#skills" class="hover:text-primary transition-colors">Skills</a>
+                <a href="#projects" class="hover:text-primary transition-colors">Projects</a>
+                <a href="#blog" class="hover:text-primary transition-colors">Blog</a>
+                <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+            <button id="menuBtn" class="md:hidden text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white px-4 py-2 shadow-md">
+            <div class="flex flex-col space-y-3 pb-3">
+                <a href="#about" class="hover:text-primary transition-colors">About</a>
+                <a href="#skills" class="hover:text-primary transition-colors">Skills</a>
+                <a href="#projects" class="hover:text-primary transition-colors">Projects</a>
+                <a href="#blog" class="hover:text-primary transition-colors">Blog</a>
+                <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex items-center pt-16 bg-gradient-to-br from-primary/5 to-primary/10">
+        <div class="container mx-auto px-4 py-16">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight mb-4">
+                        Hi, I'm <span class="text-primary">John Doe</span>
+                    </h1>
+                    <p class="text-xl mb-8 text-gray-600">Senior Full Stack Developer passionate about creating elegant solutions</p>
+                    <div class="flex space-x-4">
+                        <a href="#projects" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">View Projects</a>
+                        <a href="#contact" class="border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary/10 transition-colors">Contact Me</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+                            <img src="assets/images/avatar.jpg" alt="John Doe" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-4 -right-4 bg-primary text-white p-3 rounded-full shadow-lg">
+                            <i class="fa fa-code text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">About <span class="text-primary">Me</span></h2>
+            <div class="max-w-3xl mx-auto">
+                <p class="text-lg mb-6 text-gray-600">With over 8 years of experience in software development, I specialize in building scalable web applications and leading development teams. I have a strong background in both frontend and backend technologies, with a focus on creating efficient and maintainable code.</p>
+                <p class="text-lg mb-6 text-gray-600">I'm passionate about open-source software and regularly contribute to various projects on GitHub. When I'm not coding, you can find me writing technical blog posts or mentoring junior developers.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-primary">8+</span>
+                        <span class="text-gray-600">Years Experience</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-primary">50+</span>
+                        <span class="text-gray-600">Projects</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-primary">15+</span>
+                        <span class="text-gray-600">Open Source</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-primary">30+</span>
+                        <span class="text-gray-600">Blog Posts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">My <span class="text-primary">Skills</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Frontend -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-primary text-3xl mb-4">
+                        <i class="fa fa-desktop"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Frontend Development</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>HTML/CSS</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>JavaScript</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>React</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Vue.js</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-primary text-3xl mb-4">
+                        <i class="fa fa-server"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Backend Development</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Node.js</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Python</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Java</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>SQL/NoSQL</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DevOps -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-primary text-3xl mb-4">
+                        <i class="fa fa-cogs"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">DevOps & Tools</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Git/GitHub</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>Docker</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>CI/CD</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>AWS/Azure</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Featured <span class="text-primary">Projects</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow group">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=1" alt="Project Screenshot" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">E-commerce Platform</h3>
+                        <p class="text-gray-600 mb-4">A full-featured online store with payment integration and admin dashboard</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">React</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Node.js</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">MongoDB</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-github mr-1"></i> Code
+                            </a>
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-external-link mr-1"></i> Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow group">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=2" alt="Project Screenshot" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Task Management App</h3>
+                        <p class="text-gray-600 mb-4">Collaborative task management tool with real-time updates and team features</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Vue.js</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Firebase</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">TypeScript</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-github mr-1"></i> Code
+                            </a>
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-external-link mr-1"></i> Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow group">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=3" alt="Project Screenshot" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Data Visualization Dashboard</h3>
+                        <p class="text-gray-600 mb-4">Interactive dashboard with real-time data analytics and visualization</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">D3.js</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Python</span>
+                            <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Flask</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-github mr-1"></i> Code
+                            </a>
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">
+                                <i class="fa fa-external-link mr-1"></i> Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="https://github.com/username" target="_blank" class="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-github mr-2"></i> View All Projects
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Latest <span class="text-primary">Blog</span> Posts</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Blog Post 1 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=4" alt="Blog Post Image" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-sm text-gray-500 mb-2">June 15, 2024</div>
+                        <h3 class="text-xl font-bold mb-3">Understanding React Hooks: A Comprehensive Guide</h3>
+                        <p class="text-gray-600 mb-4">Learn how to use React Hooks effectively and avoid common pitfalls in functional components.</p>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-colors">Read More <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Blog Post 2 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=5" alt="Blog Post Image" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-sm text-gray-500 mb-2">May 28, 2024</div>
+                        <h3 class="text-xl font-bold mb-3">Docker for Beginners: Containerization Made Easy</h3>
+                        <p class="text-gray-600 mb-4">Step-by-step guide to containerizing your applications and understanding Docker fundamentals.</p>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-colors">Read More <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Blog Post 3 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=6" alt="Blog Post Image" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-sm text-gray-500 mb-2">April 10, 2024</div>
+                        <h3 class="text-xl font-bold mb-3">Clean Code Practices Every Developer Should Follow</h3>
+                        <p class="text-gray-600 mb-4">Improve your code quality with these essential clean code principles and best practices.</p>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-colors">Read More <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary/10 transition-colors">
+                    <i class="fa fa-book mr-2"></i> View All Posts
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Get in <span class="text-primary">Touch</span></h2>
+            
+            <div class="max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-6">Contact Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="text-primary text-xl mt-1 mr-4">
+                                    <i class="fa fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Email</h4>
+                                    <p class="text-gray-600">john.doe@example.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-primary text-xl mt-1 mr-4">
+                                    <i class="fa fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Phone</h4>
+                                    <p class="text-gray-600">+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-primary text-xl mt-1 mr-4">
+                                    <i class="fa fa-map-marker"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Location</h4>
+                                    <p class="text-gray-600">San Francisco, CA</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="text-xl font-bold mb-4">Follow Me</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-primary/10 text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                                <a href="#" class="bg-primary/10 text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                                <a href="#" class="bg-primary/10 text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                                <a href="#" class="bg-primary/10 text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-medium"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <form>
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 mb-2">Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="block text-gray-700 mb-2">Message</label>
+                                <textarea id="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"></textarea>
+                            </div>
+                            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold text-primary">JD</h3>
+                    <p class="text-gray-400 mt-2">Senior Full Stack Developer</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#about" class="text-gray-400 hover:text-white transition-colors">About</a>
+                    <a href="#skills" class="text-gray-400 hover:text-white transition-colors">Skills</a>
+                    <a href="#projects" class="text-gray-400 hover:text-white transition-colors">Projects</a>
+                    <a href="#blog" class="text-gray-400 hover:text-white transition-colors">Blog</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 John Doe. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
