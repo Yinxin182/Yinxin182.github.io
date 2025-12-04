@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多功能Web工具平台</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 引入Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#0FC6C2',
+            accent: '#722ED1',
+            success: '#00B42A',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            dark: '#1D2129',
+            light: '#F2F3F5'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+      }
+    }
+  </style>
+  
+  <style>
+    /* 基础动画 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* 游戏相关样式 */
+    #snake-game canvas {
+      border: 2px solid #165DFF;
+      background-color: #f8fafc;
+    }
+    
+    #tic-tac-toe .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+    
+    #tic-tac-toe .cell {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f1f5f9;
+      border-radius: 8px;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    #tic-tac-toe .cell:hover {
+      background-color: #e2e8f0;
+    }
+    
+    /* 串口终端样式 */
+    #serial-terminal {
+      font-family: 'Consolas', 'Monaco', monospace;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    #terminal-output {
+      height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    
+    #terminal-input {
+      background-color: #1e293b;
+      border: none;
+      padding: 10px;
+      color: #f8fafc;
+      width: 100%;
+      outline: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-inter text-dark min-h-screen flex flex-col">
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-cubes text-primary text-2xl"></i>
+        <span class="text-xl font-bold">WebToolHub</span>
+      </div>
+      
+      <div class="hidden md:flex items-center space-x-6">
+        <a href="#serial" class="hover:text-primary transition-colors">串口工具</a>
+        <a href="#developer" class="hover:text-primary transition-colors">开发者信息</a>
+        <a href="#management" class="hover:text-primary transition-colors">管理系统</a>
+        <a href="#games" class="hover:text-primary transition-colors">小游戏</a>
+      </div>
+      
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-dark hover:text-primary">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+    </nav>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 fade-in">
+      <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+        <a href="#serial" class="py-2 hover:text-primary transition-colors">串口工具</a>
+        <a href="#developer" class="py-2 hover:text-primary transition-colors">开发者信息</a>
+        <a href="#management" class="py-2 hover:text-primary transition-colors">管理系统</a>
+        <a href="#games" class="py-2 hover:text-primary transition-colors">小游戏</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要内容 -->
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <!-- 欢迎横幅 -->
+    <section class="bg-gradient-to-r from-primary to-accent text-white rounded-2xl p-8 mb-8 shadow-lg">
+      <div class="max-w-2xl">
+        <h1 class="text-[clamp(1.8rem,4vw,2.8rem)] font-bold mb-4 text-shadow">多功能Web工具平台</h1>
+        <p class="text-lg opacity-90 mb-6">集成串口调试、开发者信息、管理系统和休闲游戏的一站式解决方案</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#serial" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-md">
+            <i class="fa fa-plug mr-2"></i>串口工具
+          </a>
+          <a href="#games" class="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-30 transition-colors">
+            <i class="fa fa-gamepad mr-2"></i>开始游戏
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 功能卡片网格 -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white rounded-xl shadow p-6 card-hover">
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa fa-plug text-primary text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">串口工具</h3>
+        <p class="text-gray-600 mb-4">Web串口调试工具，支持数据收发和配置</p>
+        <a href="#serial" class="text-primary font-medium flex items-center">
+          开始使用 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow p-6 card-hover">
+        <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa fa-user-circle text-secondary text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">开发者信息</h3>
+        <p class="text-gray-600 mb-4">查看开发者资料和项目信息</p>
+        <a href="#developer" class="text-primary font-medium flex items-center">
+          了解更多 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow p-6 card-hover">
+        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa fa-tasks text-accent text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">管理系统</h3>
+        <p class="text-gray-600 mb-4">集成常用的管理功能和数据监控</p>
+        <a href="#management" class="text-primary font-medium flex items-center">
+          进入系统 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow p-6 card-hover">
+        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa fa-gamepad text-warning text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">休闲游戏</h3>
+        <p class="text-gray-600 mb-4">多款经典小游戏，放松娱乐</p>
+        <a href="#games" class="text-primary font-medium flex items-center">
+          开始游戏 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- 串口工具部分 -->
+    <section id="serial" class="mb-16 fade-in">
+      <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold flex items-center">
+            <i class="fa fa-plug text-primary mr-3"></i>串口调试工具
+          </h2>
+          <div class="flex space-x-2">
+            <button id="serial-connect" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+              <i class="fa fa-connectdevelop mr-2"></i>连接
+            </button>
+            <button id="serial-clear" class="bg-gray-200 text-dark px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+              <i class="fa fa-trash mr-2"></i>清空
+            </button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-1">
+            <h3 class="text-lg font-semibold mb-4">串口配置</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">端口选择</label>
+                <select id="serial-port" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                  <option value="">请选择端口</option>
+                  <option value="COM1">COM1</option>
+                  <option value="COM2">COM2</option>
+                  <option value="COM3">COM3</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">波特率</label>
+                <select id="serial-baudrate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                  <option value="9600">9600</option>
+                  <option value="19200">19200</option>
+                  <option value="38400">38400</option>
+                  <option value="57600">57600</option>
+                  <option value="115200" selected>115200</option>
+                </select>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">数据位</label>
+                  <select id="serial-databits" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                    <option value="8" selected>8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">停止位</label>
+                  <select id="serial-stopbits" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">校验位</label>
+                <select id="serial-parity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                  <option value="none" selected>无</option>
+                  <option value="odd">奇校验</option>
+                  <option value="even">偶校验</option>
+                </select>
+              </div>
+              
+              <div class="pt-2">
+                <div class="flex items-center space-x-2 mb-2">
+                  <input type="checkbox" id="auto-scroll" class="w-4 h-4 text-primary" checked>
+                  <label for="auto-scroll" class="text-sm">自动滚动</label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="show-timestamp" class="w-4 h-4 text-primary" checked>
+                  <label for="show-timestamp" class="text-sm">显示时间戳</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lg:col-span-2">
+            <h3 class="text-lg font-semibold mb-4">终端</h3>
+            <div id="serial-terminal">
+              <div id="terminal-output" class="scrollbar-hide">
+                <div class="text-gray-400">[2023-07-01 10:00:00] 串口终端已准备就绪</div>
+                <div class="text-gray-400">[2023-07-01 10:00:05] 请选择串口并连接</div>
+              </div>
+              <div class="flex border-t border-gray-600">
+                <input type="text" id="terminal-input" placeholder="输入发送数据..." />
+                <button id="send-data" class="bg-primary px-4 text-white">
+                  <i class="fa fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300 text-sm">
+                <i class="fa fa-plus mr-1"></i>换行
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300 text-sm">
+                <i class="fa fa-code mr-1"></i>HEX
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300 text-sm">
+                <i class="fa fa-save mr-1"></i>保存
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300 text-sm">
+                <i class="fa fa-repeat mr-1"></i>自动发送
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 开发者信息部分 -->
+    <section id="developer" class="mb-16 fade-in">
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fa fa-user-circle text-secondary mr-3"></i>开发者信息
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="md:col-span-1">
+            <div class="bg-light rounded-xl p-6 text-center">
+              <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                <img src="https://picsum.photos/200/200" alt="开发者头像" class="w-full h-full object-cover">
+              </div>
+              <h3 class="text-xl font-bold mb-1">Web开发者</h3>
+              <p class="text-gray-600 mb-4">全栈开发工程师</p>
+              <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="text-primary hover:text-primary/80"><i class="fa fa-github text-xl"></i></a>
+                <a href="#" class="text-primary hover:text-primary/80"><i class="fa fa-linkedin text-xl"></i></a>
+                <a href="#" class="text-primary hover:text-primary/80"><i class="fa fa-twitter text-xl"></i></a>
+              </div>
+              <a href="#" class="inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                <i class="fa fa-envelope mr-2"></i>联系我
+              </a>
+            </div>
+          </div>
+          
+          <div class="md:col-span-2">
+            <div class="space-y-6">
+              <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                  <i class="fa fa-info-circle text-primary mr-2"></i>关于我
+                </h3>
+                <p class="text-gray-700 leading-relaxed">
+                  资深Web开发者，拥有5年以上前端和后端开发经验。专注于现代Web技术栈，擅长使用React、Vue、Node.js等技术构建高性能Web应用。热爱开源，热衷于探索新技术并分享知识。
+                </p>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                  <i class="fa fa-code text-primary mr-2"></i>技术栈
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">HTML5</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">CSS3</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">JavaScript</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">TypeScript</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">React</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">Vue</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">Node.js</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">TailwindCSS</span>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">Docker</span>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                  <i class="fa fa-trophy text-primary mr-2"></i>项目经验
+                </h3>
+                <div class="space-y-4">
+                  <div class="border-l-4 border-primary pl-4">
+                    <h4 class="font-medium">企业管理系统</h4>
+                    <p class="text-sm text-gray-600">基于React和Node.js开发的全栈企业管理系统，支持数据可视化和权限管理</p>
+                  </div>
+                  <div class="border-l-4 border-primary pl-4">
+                    <h4 class="font-medium">电商平台</h4>
+                    <p class="text-sm text-gray-600">使用Vue和Express构建的高性能电商平台，集成支付和物流系统</p>
+                  </div>
+                  <div class="border-l-4 border-primary pl-4">
+                    <h4 class="font-medium">IoT监控系统</h4>
+                    <p class="text-sm text-gray-600">实时数据监控和可视化系统，支持WebSocket和MQTT协议</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                  <i class="fa fa-graduation-cap text-primary mr-2"></i>教育背景
+                </h3>
+                <div class="border-l-4 border-primary pl-4">
+                  <h4 class="font-medium">计算机科学与技术 学士</h4>
+                  <p class="text-sm text-gray-600">某某大学 (2015-2019)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 管理系统部分 -->
+    <section id="management" class="mb-16 fade-in">
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fa fa-tasks text-accent mr-3"></i>管理系统
+        </h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-light rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">用户总数</h3>
+              <i class="fa fa-users text-accent text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold">12,548</p>
+            <p class="text-success text-sm mt-1"><i class="fa fa-arrow-up mr-1"></i>12.5% 较上月</p>
+          </div>
+          
+          <div class="bg-light rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">订单总额</h3>
+              <i class="fa fa-shopping-cart text-accent text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold">¥856,923</p>
+            <p class="text-success text-sm mt-1"><i class="fa fa-arrow-up mr-1"></i>8.3% 较上月</p>
+          </div>
+          
+          <div class="bg-light rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">系统状态</h3>
+              <i class="fa fa-server text-accent text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold">正常</p>
+            <p class="text-success text-sm mt-1"><i class="fa fa-check-circle mr-1"></i>运行时间: 246天</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">数据统计</h3>
+            <div class="bg-light rounded-xl p-4 h-64">
+              <canvas id="stats-chart"></canvas>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold mb-4">最近订单</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                  <tr>
+                    <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单号</th>
+                    <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">客户</th>
+                    <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额</th>
+                    <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">ORD-2023-1245</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">张三</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">¥1,299</td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-success/10 text-success">已完成</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">ORD-2023-1244</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">李四</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">¥899</td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-warning/10 text-warning">处理中</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">ORD-2023-1243</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">王五</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">¥2,450</td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-success/10 text-success">已完成</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">ORD-2023-1242</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">赵六</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">¥599</td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-danger/10 text-danger">已取消</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 小游戏部分 -->
+    <section id="games" class="mb-16 fade-in">
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fa fa-gamepad text-warning mr-3"></i>小游戏中心
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <!-- 贪吃蛇游戏 -->
+          <div class="bg-light rounded-xl p-6 card-hover">
+            <div class="text-center mb-4">
+              <i class="fa fa-square text-warning text-3xl mb-2"></i>
+              <h3 class="text-lg font-semibold">贪吃蛇</h3>
+            </div>
+            <div id="snake-game" class="flex justify-center mb-4">
+              <canvas id="snake-canvas" width="240" height="240"></canvas>
+            </div>
+            <div class="flex justify-center space-x-2">
+              <button class="bg-warning text-white px-3 py-1 rounded hover:bg-warning/90">
+                <i class="fa fa-play mr-1"></i>开始
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300">
+                <i class="fa fa-refresh mr-1"></i>重置
+              </button>
+            </div>
+          </div>
+          
+          <!-- 井字棋游戏 -->
+          <div class="bg-light rounded-xl p-6 card-hover">
+            <div class="text-center mb-4">
+              <i class="fa fa-circle-o text-warning text-3xl mb-2"></i>
+              <h3 class="text-lg font-semibold">井字棋</h3>
+            </div>
+            <div id="tic-tac-toe" class="flex justify-center mb-4">
+              <div class="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+              </div>
+            </div>
+            <div class="flex justify-center space-x-2">
+              <button class="bg-warning text-white px-3 py-1 rounded hover:bg-warning/90">
+                <i class="fa fa-refresh mr-1"></i>重新开始
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300">
+                <i class="fa fa-trophy mr-1"></i>计分板
+              </button>
+            </div>
+          </div>
+          
+          <!-- 2048游戏 -->
+          <div class="bg-light rounded-xl p-6 card-hover">
+            <div class="text-center mb-4">
+              <i class="fa fa-th text-warning text-3xl mb-2"></i>
+              <h3 class="text-lg font-semibold">2048</h3>
+            </div>
+            <div class="flex justify-center mb-4">
+              <div class="grid grid-cols-4 gap-2 w-48">
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold">2</div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold">4</div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold">8</div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold">16</div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold"></div>
+                <div class="bg-gray-200 rounded-md h-12 flex items-center justify-center font-bold">32</div>
+              </div>
+            </div>
+            <div class="flex justify-center space-x-2">
+              <button class="bg-warning text-white px-3 py-1 rounded hover:bg-warning/90">
+                <i class="fa fa-play mr-1"></i>开始
+              </button>
+              <button class="bg-gray-200 text-dark px-3 py-1 rounded hover:bg-gray-300">
+                <i class="fa fa-refresh mr-1"></i>重置
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 更多游戏卡片 -->
+          <div class="bg-light rounded-xl p-6 flex items-center card-hover">
+            <i class="fa fa-puzzle-piece text-warning text-3xl mr-4"></i>
+            <div>
+              <h3 class="font-semibold">拼图游戏</h3>
+              <p class="text-sm text-gray-600">即将上线</p>
+            </div>
+          </div>
+          
+          <div class="bg-light rounded-xl p-6 flex items-center card-hover">
+            <i class="fa fa-rocket text-warning text-3xl mr-4"></i>
+            <div>
+              <h3 class="font-semibold">飞机大战</h3>
+              <p class="text-sm text-gray-600">即将上线</p>
+            </div>
+          </div>
+          
+          <div class="bg-light rounded-xl p-6 flex items-center card-hover">
+            <i class="fa fa-diamond text-warning text-3xl mr-4"></i>
+            <div>
+              <h3 class="font-semibold">消消乐</h3>
+              <p class="text-sm text-gray-600">即将上线</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fa fa-cubes text-primary text-2xl"></i>
+            <span class="text-xl font-bold">WebToolHub</span>
+          </div>
+          <p class="text-gray-400 mb-4">多功能Web工具平台，集成串口工具、管理系统和小游戏</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fa fa-github"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-white"><i class="fa fa-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">快速链接</h3>
+          <ul class="space-y-2">
+            <li><a href="#serial" class="text-gray-400 hover:text-white">串口工具</a></li>
+            <li><a href="#developer" class="text-gray-400 hover:text-white">开发者信息</a></li>
+            <li><a href="#management" class="text-gray-400 hover:text-white">管理系统</a></li>
+            <li><a href="#games" class="text-gray-400 hover:text-white">小游戏</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">资源</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white">文档</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">API</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">教程</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">开源代码</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">联系我们</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center text-gray-400">
+              <i class="fa fa-envelope mr-2"></i> contact@webtoolhub.com
+            </li>
+            <li class="flex items-center text-gray-400">
+              <i class="fa fa-map-marker mr-2"></i> 北京市海淀区科技园区
+            </li>
+            <li class="flex items-center text-gray-400">
+              <i class="fa fa-phone mr-2"></i> +86 123 4567 8901
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2023 WebToolHub. 保留所有权利。</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript代码 -->
+  <script>
+    // 移动端菜单切换
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          // 关闭移动端菜单
+          document.getElementById('mobile-menu').classList.add('hidden');
+        }
+      });
+    });
+    
+    // 串口终端功能
+    document.getElementById('serial-connect').addEventListener('click', function() {
+      const output = document.getElementById('terminal-output');
+      const now = new Date();
+      const timestamp = now.toLocaleString();
+      
+      if (this.textContent.includes('连接')) {
+        this.innerHTML = '<i class="fa fa-disconnect mr-2"></i>断开';
+        this.classList.remove('bg-primary');
+        this.classList.add('bg-danger');
+        
+        output.innerHTML += `<div class="text-success">[${timestamp}] 已连接到 ${document.getElementById('serial-port').value}</div>`;
+      } else {
+        this.innerHTML = '<i class="fa fa-connectdevelop mr-2"></i>连接';
+        this.classList.remove('bg-danger');
+        this.classList.add('bg-primary');
+        
+        output.innerHTML += `<div class="text-warning">[${timestamp}] 已断开连接</div>`;
+      }
+      
+      output.scrollTop = output.scrollHeight;
+    });
+    
+    document.getElementById('serial-clear').addEventListener('click', function() {
+      document.getElementById('terminal-output').innerHTML = '';
+    });
+    
+    document.getElementById('send-data').addEventListener('click', function() {
+      const input = document.getElementById('terminal-input');
+      const output = document.getElementById('terminal-output');
+      
+      if (input.value.trim()) {
+        const now = new Date();
+        const timestamp = now.toLocaleString();
+        
+        output.innerHTML += `<div class="text-primary">[${timestamp}] > ${input.value}</div>`;
+        output.innerHTML += `<div class="text-secondary">[${timestamp}] < 响应: ${input.value}</div>`;
+        
+        input.value = '';
+        output.scrollTop = output.scrollHeight;
+      }
+    });
+    
+    document.getElementById('terminal-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('send-data').click();
+      }
+    });
+    
+    // 贪吃蛇游戏
+    const snakeCanvas = document.getElementById('snake-canvas');
+    const snakeCtx = snakeCanvas.getContext('2d');
+    
+    // 初始化贪吃蛇画布
+    function initSnake() {
+      snakeCtx.fillStyle = '#f8fafc';
+      snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+      
+      // 绘制蛇
+      snakeCtx.fillStyle = '#165DFF';
+      snakeCtx.fillRect(120, 120, 15, 15);
+      snakeCtx.fillRect(105, 120, 15, 15);
+      
+      // 绘制食物
+      snakeCtx.fillStyle = '#F53F3F';
+      snakeCtx.fillRect(60, 60, 15, 15);
+    }
+    
+    // 井字棋游戏
+    const cells = document.querySelectorAll('#tic-tac-toe .cell');
+    let currentPlayer = 'X';
+    
+    cells.forEach(cell => {
+      cell.addEventListener('click', function() {
+        if (!this.textContent) {
+          this.textContent = currentPlayer;
+          this.style.color = currentPlayer === 'X' ? '#165DFF' : '#F53F3F';
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+      });
+    });
+    
+    // 统计图表
+    const statsChart = new Chart(
+      document.getElementById('stats-chart'),
+      {
+        type: 'line',
+        data: {
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+          datasets: [{
+            label: '用户增长',
+            data: [1200, 1900, 3000, 5000, 8000, 12548],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    );
+    
+    // 页面加载完成后初始化
+    window.addEventListener('DOMContentLoaded', function() {
+      initSnake();
+      
+      // 添加滚动动画
+      const sections = document.querySelectorAll('section');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in');
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+    });
+  </script>
+</body>
+</html>
